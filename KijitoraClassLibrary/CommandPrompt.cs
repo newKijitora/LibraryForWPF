@@ -9,6 +9,9 @@ namespace KijitoraClassLibrary
 {
     public sealed class CommandPrompt
     {
+        /// <summary>
+        /// コマンドラインを読み取って実行する
+        /// </summary>
         public void Execute(CommandLine commandLine)
         {
             Execute(commandLine as IEnumerable<string>);
