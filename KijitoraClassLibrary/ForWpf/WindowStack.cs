@@ -31,7 +31,8 @@ namespace KijitoraClassLibrary.ForWpf
         // ビューモデル開始時
         private void OpenWindowWithViewModelEntried(object sender, EventArgs e)
         {
-            var assembly = Assembly.GetExecutingAssembly();
+            var type = _app.GetType();
+            var assembly = Assembly.GetAssembly(type);
             var namespaceName = $"{assembly.GetName().Name}.{"Views"}";
             var viewModelName = sender.GetType().Name;
             var windowName = viewModelName.Replace(nameof(ViewModel), string.Empty);
