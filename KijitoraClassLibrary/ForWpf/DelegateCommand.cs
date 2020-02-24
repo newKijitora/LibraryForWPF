@@ -12,18 +12,18 @@ namespace KijitoraClassLibrary.ForWpf
     /// </summary>
     public sealed class DelegateCommand : ICommand
     {
-        private readonly Action<object> _execute1;
-        private readonly Action _execute2;
-        private readonly Func<object, bool> _canExecute1;
-        private readonly Func<bool> _canExecute2;
+        private readonly Action<object> _parameterExecute;
+        private readonly Action _nonParameterExecute;
+        private readonly Func<object, bool> _canParameterExecute;
+        private readonly Func<bool> _canNonParameterExecute;
 
         /// <summary>
         /// <see cref="DelegateCommand"/>クラスの新しいインスタンスを初期化します。
         /// </summary>
         public DelegateCommand(Action<object> action, Func<object, bool> func)
         {
-            _execute1 = action ?? throw new ArgumentNullException();
-            _canExecute1 = func ?? throw new ArgumentNullException();
+            _parameterExecute = action ?? throw new ArgumentNullException();
+            _canParameterExecute = func ?? throw new ArgumentNullException();
         }
 
         /// <summary>
@@ -36,8 +36,8 @@ namespace KijitoraClassLibrary.ForWpf
         /// </summary>
         public DelegateCommand(Action action, Func<bool> func)
         {
-            _execute2 = action ?? throw new ArgumentNullException();
-            _canExecute2 = func ?? throw new ArgumentNullException();
+            _nonParameterExecute = action ?? throw new ArgumentNullException();
+            _canNonParameterExecute = func ?? throw new ArgumentNullException();
         }
 
         /// <summary>
@@ -47,22 +47,22 @@ namespace KijitoraClassLibrary.ForWpf
 
         public void Execute(object parameter)
         {
-            if (_execute1 != null)
-                _execute1.Invoke(parameter);
+            if (_parameterExecute != null)
+                _parameterExecute.Invoke(parameter);
 
-            if (_execute2 != null)
-                _execute2.Invoke();
+            if (_nonParameterExecute != null)
+                _nonParameterExecute.Invoke();
         }
 
         public bool CanExecute(object parameter)
         {
-            if (_canExecute1 != null)
-                return _canExecute1(parameter);
+            if (_canParameterExecute != null)
+                return _canParameterExecute(parameter);
 
-            if (_canExecute2 != null)
-                return _canExecute2();
+            if (_canNonParameterExecute != null)
+                return _canNonParameterExecute();
 
-            throw new InvalidOperationException();
+            return true;
         }
 
         public event EventHandler CanExecuteChanged
