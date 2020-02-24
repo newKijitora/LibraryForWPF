@@ -10,7 +10,7 @@ namespace KijitoraClassLibrary.ForWpf
     /// <summary>
     /// ビューモデルの開始と対応するウィンドウをスタックで管理します。
     /// </summary>
-    public class WindowStack : Stack<Window>
+    public sealed class WindowStack : Stack<Window>
     {
         // アプリケーション
         private Application _app;
@@ -31,20 +31,16 @@ namespace KijitoraClassLibrary.ForWpf
         // ビューモデル開始時
         private void OpenWindowWithViewModelEntried(object sender, EventArgs e)
         {
-            var type = _app.GetType();
-            var assembly = Assembly.GetAssembly(type);
+            var assembly = Assembly.GetAssembly(_app.GetType());
+
             var namespaceName = $"{assembly.GetName().Name}.{"Views"}";
             var viewModelName = sender.GetType().Name;
             var windowName = viewModelName.Replace(nameof(ViewModel), string.Empty);
 
             var window = assembly.CreateInstance($"{namespaceName}.{windowName}") as Window;
-            if (window is null)
-            {
-                return;
-            }
-
             var viewModel = sender as ViewModel;
-            if (viewModel is null)
+
+            if (window is null || viewModel is null)
             {
                 return;
             }
@@ -52,8 +48,24 @@ namespace KijitoraClassLibrary.ForWpf
             window.Closing += Window_Closing;
             window.DataContext = viewModel;
 
+            // 認証が必要なビューモデルの場合
+            if (viewModel.IsAuthenticationRequired)
+            {
+                var failed = !viewModel.Authenticate();
+                if (failed)
+                {
+                    if (Equals(Application.Current.MainWindow, window))
+                    {
+                        Application.Current.Shutdown();
+                    }
+                    return;
+                }
+            }
+
             if (this.Any())
+            {
                 window.Owner = Peek();
+            }
 
             Push(window);
             window.ShowDialog();
@@ -99,12 +111,10 @@ namespace KijitoraClassLibrary.ForWpf
         }
 
         // アプリケーションを閉じる必要があるかどうかをチェックする
-        protected virtual void ClosingCheck(Window window)
+        private void ClosingCheck(Window window)
         {
             var viewModel = window.DataContext as ViewModel;
             if (viewModel is null) return;
-
-            var viewModelIsCanceled = viewModel != null ? viewModel.IsCanceled : true;
 
             // メインウィンドウを閉じた場合
             if (window == _app.MainWindow)
@@ -112,6 +122,8 @@ namespace KijitoraClassLibrary.ForWpf
                 // イベントハンドラの解除
                 ViewModel.ViewModelEntried -= OpenWindowWithViewModelEntried;
                 ViewModel.ViewModelExited -= CloseWindowWithViewModelExited;
+
+                Application.Current.Shutdown();
             }
         }
     }

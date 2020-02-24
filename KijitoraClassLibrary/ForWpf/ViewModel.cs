@@ -109,6 +109,17 @@ namespace KijitoraClassLibrary.ForWpf
         // 別スレッドでタスクを実行する
         //----------------------------------------------------------------------
 
+        public bool IsAuthenticationRequired { get; set; }
+
+        public virtual bool Authenticate()
+        {
+            throw new NotImplementedException();
+        }
+
+        //----------------------------------------------------------------------
+        // 別スレッドでタスクを実行する
+        //----------------------------------------------------------------------
+
         /// <summary>
         /// 別スレッドでのタスクを開始するイベントです。
         /// </summary>

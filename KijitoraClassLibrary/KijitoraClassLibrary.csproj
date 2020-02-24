@@ -72,5 +72,8 @@
     <Compile Include="ValueObjects\VolumeUnit.cs" />
     <Compile Include="ValueObjects\Weight.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
