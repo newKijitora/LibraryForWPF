@@ -60,11 +60,6 @@ namespace KijitoraClassLibrary.ForWpf
             if (_canExecute1 != null)
                 return _canExecute1(parameter);
 
-            throw new InvalidOperationException();
-        }
-
-        public bool CanExecute()
-        {
             if (_canExecute2 != null)
                 return _canExecute2();
 
