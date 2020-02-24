@@ -53,6 +53,7 @@
     <Compile Include="ForWpf\DelegateCommand.cs" />
     <Compile Include="ForWpf\ExtensionMethods.cs" />
     <Compile Include="ForWpf\ViewModel.cs" />
+    <Compile Include="ForWpf\WindowStack.cs" />
     <Compile Include="Images\Exif.cs" />
     <Compile Include="Images\ImageOperator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

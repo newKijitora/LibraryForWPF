@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace KijitoraClassLibrary.ForWpf
 {
     /// <summary>
-    /// ビューモデルの機能を定義する抽象クラスです。
+    /// ビューモデルの基底クラスです。
     /// </summary>
-    public abstract class ViewModel : INotifyPropertyChanged
+    public class ViewModel : INotifyPropertyChanged
     {
         //-----------------------------------------------------------------------------------------
         // コンストラクタ
@@ -36,7 +33,7 @@ namespace KijitoraClassLibrary.ForWpf
         /// </summary>
         protected virtual void Entry()
         {
-            ViewModelEntried?.Invoke(this, new EventArgs());
+            ViewModelEntried?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
@@ -47,20 +44,12 @@ namespace KijitoraClassLibrary.ForWpf
         /// <summary>
         /// 終了イベントを発行します。
         /// </summary>
-        protected virtual void Exit()
-        {
-            ViewModelExited?.Invoke(this, new EventArgs());
-        }
-
-        /// <summary>
-        /// 終了イベントを発行します。
-        /// </summary>
         protected virtual void Exit(bool done)
         {
             IsDone = done;
             IsCanceled = !done;
 
-            ViewModelExited?.Invoke(this, new EventArgs());
+            ViewModelExited?.Invoke(this, EventArgs.Empty);
         }
 
         //----------------------------------------------------------------------
@@ -114,10 +103,75 @@ namespace KijitoraClassLibrary.ForWpf
             set => SetProperty(ref _isCanceled, value);
         }
 
-        private bool _isCanceled;
+        private bool _isCanceled = true;
+
+        //----------------------------------------------------------------------
+        // 別スレッドでタスクを実行する
+        //----------------------------------------------------------------------
 
         /// <summary>
-        /// プロパティの変更を通知するイベントです。
+        /// 別スレッドでのタスクを開始するイベントです。
+        /// </summary>
+        public static event EventHandler TaskStarted;
+
+        /// <summary>
+        /// 別スレッドでのタスクの開始イベントを発行します。
+        /// </summary>
+        protected virtual void OnTaskStarted()
+        {
+            TaskStarted?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// 別スレッドでのタスクを終了するイベントです。
+        /// </summary>
+        public static event EventHandler TaskCompleted;
+
+        /// <summary>
+        /// 別スレッドでのタスクが終了イベントを発行します。
+        /// </summary>
+        protected virtual void OnTaskCompleted()
+        {
+            TaskCompleted?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// 別スレッドでタスクを実行します。
+        /// </summary>
+        protected async Task TaskStart(Action action)
+        {
+            var task = Task.Run(action);
+
+            OnTaskStarted();
+
+            await task;
+
+            OnTaskCompleted();
+        }
+
+        //----------------------------------------------------------------------
+        // オーバーライド用
+        //----------------------------------------------------------------------
+
+        /// <summary>
+        /// ビューモデルで必要な更新を実行します。
+        /// </summary>
+        public virtual void Update() { }
+
+        /// <summary>
+        /// ビューモデルの終了を許可するかどうかを表します。
+        /// </summary>
+        public virtual bool CanClose
+        {
+            get => true;
+        }
+
+        //----------------------------------------------------------------------
+        // プロパティの変更通知 -- INotifyPropertyChanged の実装
+        //----------------------------------------------------------------------
+
+        /// <summary>
+        /// プロパティの変更を通知します。
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -126,7 +180,11 @@ namespace KijitoraClassLibrary.ForWpf
         /// </summary>
         protected virtual bool SetProperty<T>(ref T field, T value, [CallerMemberName]string propertyName = null)
         {
-            if (Equals(field, value)) return false;
+            if (Equals(field, value))
+            {
+                return false;
+            }
+
             field = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             return true;
