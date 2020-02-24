@@ -47,12 +47,11 @@ namespace KijitoraClassLibrary.ForWpf
 
         public void Execute(object parameter)
         {
-            _execute1?.Invoke(parameter);
-        }
+            if (_execute1 != null)
+                _execute1.Invoke(parameter);
 
-        public void Execute()
-        {
-            _execute2?.Invoke();
+            if (_execute2 != null)
+                _execute2.Invoke();
         }
 
         public bool CanExecute(object parameter)
