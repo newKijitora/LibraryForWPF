@@ -35,5 +35,32 @@ namespace KijitoraClassLibrary.Reflection
                 }
             }
         }
+
+        /// <summary>
+        /// オブジェクトの指定された名前を持つプロパティ値を列挙します。
+        /// </summary>
+        public static IEnumerable<PropertyInfo> ExtractProperties(this object obj, params string[] names)
+        {
+            var errorMessage = "配列が空です。";
+
+            if (names.Length == 0)
+            {
+                throw new ArgumentException(errorMessage);
+            }
+
+            PropertyInfo[] propInfos = obj.GetType().GetProperties();
+
+            foreach (var name in names)
+            {
+                foreach (var propInfo in propInfos)
+                {
+                    if (Equals(propInfo.Name, name))
+                    {
+                        yield return propInfo;
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

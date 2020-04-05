@@ -50,6 +50,7 @@
     <Compile Include="CommandLine.cs" />
     <Compile Include="CommandPrompt.cs" />
     <Compile Include="ForWpf\Behaviors\ItemsControlDragDropBehavior.cs" />
+    <Compile Include="ForWpf\Behaviors\KeyboardBehavior.cs" />
     <Compile Include="ForWpf\DelegateCommand.cs" />
     <Compile Include="ForWpf\ExtensionMethods.cs" />
     <Compile Include="ForWpf\ViewModel.cs" />
