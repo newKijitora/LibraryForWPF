@@ -31,7 +31,7 @@ namespace KijitoraClassLibrary.ForWpf
         /// <summary>
         /// 開始イベントを発行します。
         /// </summary>
-        protected virtual void Entry()
+        protected void Entry()
         {
             ViewModelEntried?.Invoke(this, EventArgs.Empty);
         }
@@ -44,7 +44,7 @@ namespace KijitoraClassLibrary.ForWpf
         /// <summary>
         /// 終了イベントを発行します。
         /// </summary>
-        protected virtual void Exit(bool done)
+        protected void Exit(bool done)
         {
             IsDone = done;
             IsCanceled = !done;
@@ -106,58 +106,14 @@ namespace KijitoraClassLibrary.ForWpf
         private bool _isCanceled = true;
 
         //----------------------------------------------------------------------
-        // 別スレッドでタスクを実行する
+        // 認証が必要かどうかを表す
         //----------------------------------------------------------------------
 
-        public bool IsAuthenticationRequired { get; set; }
+        public bool IsAuthenticationRequired { get; }
 
         public virtual bool Authenticate()
         {
             throw new NotImplementedException();
-        }
-
-        //----------------------------------------------------------------------
-        // 別スレッドでタスクを実行する
-        //----------------------------------------------------------------------
-
-        /// <summary>
-        /// 別スレッドでのタスクを開始するイベントです。
-        /// </summary>
-        public static event EventHandler TaskStarted;
-
-        /// <summary>
-        /// 別スレッドでのタスクの開始イベントを発行します。
-        /// </summary>
-        protected virtual void OnTaskStarted()
-        {
-            TaskStarted?.Invoke(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// 別スレッドでのタスクを終了するイベントです。
-        /// </summary>
-        public static event EventHandler TaskCompleted;
-
-        /// <summary>
-        /// 別スレッドでのタスクが終了イベントを発行します。
-        /// </summary>
-        protected virtual void OnTaskCompleted()
-        {
-            TaskCompleted?.Invoke(this, EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// 別スレッドでタスクを実行します。
-        /// </summary>
-        protected async Task TaskStart(Action action)
-        {
-            var task = Task.Run(action);
-
-            OnTaskStarted();
-
-            await task;
-
-            OnTaskCompleted();
         }
 
         //----------------------------------------------------------------------

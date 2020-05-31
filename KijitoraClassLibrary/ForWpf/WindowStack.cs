@@ -10,7 +10,7 @@ namespace KijitoraClassLibrary.ForWpf
     /// <summary>
     /// ビューモデルの開始と対応するウィンドウをスタックで管理します。
     /// </summary>
-    public sealed class WindowStack : Stack<Window>
+    public sealed class WindowStack : Stack<Window>, IDisposable
     {
         // アプリケーション
         private Application _app;
@@ -125,6 +125,11 @@ namespace KijitoraClassLibrary.ForWpf
 
                 Application.Current.Shutdown();
             }
+        }
+
+        public void Dispose()
+        {
+
         }
     }
 }
