@@ -398,6 +398,11 @@ namespace KijitoraClassLibrary.ForWpf.Behaviors
 
         private void ItemsControl_PreviewMouseMove(object sender, MouseEventArgs e)
         {
+            if (e.OriginalSource is Thumb)
+            {
+                return;
+            }
+
             var selector = sender as Selector;
             if (selector is null)
             {
