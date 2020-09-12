@@ -59,6 +59,7 @@
     <Compile Include="Images\ImageOperator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\PropertyExtractor.cs" />
+    <Compile Include="TagElement.cs" />
     <Compile Include="ValueObjects\Area.cs" />
     <Compile Include="ValueObjects\AreaUnit.cs" />
     <Compile Include="ValueObjects\CentimeterUnit.cs" />
